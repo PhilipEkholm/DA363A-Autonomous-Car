@@ -5,8 +5,8 @@
 
 #include <ESP8266WiFi.h>
 
-const char* ssid     = "Philips iPhone";
-const char* password = "12345679";
+const char* ssid     = "iot";
+const char* password = "";
 
 const char* host = "wifitest.adafruit.com";
 
