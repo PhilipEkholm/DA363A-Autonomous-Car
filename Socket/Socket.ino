@@ -5,11 +5,11 @@
 
 #include <ESP8266WiFi.h>
 
-const char* ssid     = "Philips iPhone";
-const char* password = "12345678";
+const char* ssid     = "honor";
+const char* password = "abcdefg1";
 
 const char* host = "wifitest.adafruit.com";
-const char* remoteIp = "10.2.8.174";
+const char* remoteIp = "192.168.1.6";
 
 // Use WiFiClient class to create TCP connections
 WiFiClient client;
@@ -41,27 +41,19 @@ void setup() {
 int value = 0;
 
 void loop() {
-  delay(5000);
+  delay(500);
   ++value;
 
   Serial.print("connecting to ");
-  Serial.println(host);
+  Serial.println(remoteIp);
 
-  const int httpPort = 80;
-  if (!client.connect(host, httpPort)) {
+  if (!client.connect(remoteIp, 4444)) {
     Serial.println("connection failed");
     return;
   }
   
-  // We now create a URI for the request
-  String url = "/testwifi/index.html";
-  Serial.print("Requesting URL: ");
-  Serial.println(url);
-  
   // This will send the request to the server
-  client.print(String("GET ") + url + " HTTP/1.1\r\n" +
-               "Host: " + host + "\r\n" + 
-               "Connection: close\r\n\r\n");
+  client.print("Hello world!");
   delay(500);
   
   // Read all the lines of the reply from server and print them to Serial
@@ -72,8 +64,6 @@ void loop() {
   
   Serial.println();
   Serial.println("closing connection");
-
-  Serial.print("Attempting connection to server... ");
 }
 
 void sendMessage(String toSend){
