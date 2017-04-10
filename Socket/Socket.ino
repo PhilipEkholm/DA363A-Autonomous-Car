@@ -47,7 +47,7 @@ void loop() {
   Serial.print("connecting to ");
   Serial.println(remoteIp);
 
-  if (!client.connect(remoteIp, 4444)) {
+  if (!client.connect(remoteIp, 4433)) {
     Serial.println("connection failed");
     return;
   }
@@ -64,16 +64,4 @@ void loop() {
   
   Serial.println();
   Serial.println("closing connection");
-}
-
-void sendMessage(String toSend){
-
-    if(client){
-        client.println(toSend+'\n');
-        client.flush();
-        Serial.println("Sendt message: "+toSend);
-    }
-    else{
-        Serial.println("Could not send message; Not connected.");
-    }
 }
