@@ -9,21 +9,24 @@
 
 #include <ESP8266WiFi.h>
 
-const char* ssid = "honor";
-const char* password = "abcdefg1";
+const char* ssid = "Ekholm";
+const char* password = "Koenigsegg";
+const int motorPin = 0;
+const int servoPin = 15;
+
+boolean alreadyConnected = false; // whether or not the client was connected previously
 
 // Create an instance of the server
 // specify the port to listen on as an argument
-WiFiServer server(5555);
+WiFiServer server(4444);
 
 void setup() {
   Serial.begin(115200);
   delay(10);
 
   // prepare GPIO2
-  pinMode(2, OUTPUT);
-  pinMode(15, OUTPUT);
-  digitalWrite(2, 0);
+  pinMode(motorPin, OUTPUT);
+  pinMode(servoPin, OUTPUT);
   
   // Connect to WiFi network
   Serial.println();
@@ -47,34 +50,59 @@ void setup() {
   // Print the IP address
   Serial.println(WiFi.localIP());
 }
+//By making the client object global we can keep up the session
+WiFiClient client;
+boolean alreadyDone = false;
 
 void loop() {
+  
   // Check if a client has connected
-  WiFiClient client = server.available();
+  client = server.available();
+  
   if (!client) {
     return;
   }
-  digitalWrite(15, HIGH);
-  
+     
   // Wait until the client sends some data
   Serial.println("new client");
   while(!client.available()){
     delay(1);
   }
+
+  String req = "";
   
   // Read the first line of the request
-  String req = client.readStringUntil('\r');
+  req = client.readStringUntil('\r');
   Serial.println(req);
+  protoCode_to_pwm(req);
   client.flush();
   
   client.flush();
 
   // Send the response to the client
   client.print("Response");
+  
   delay(1);
   Serial.println("Client disonnected");
 
   // The client will actually be disconnected 
-  // when the function returns and 'client' object is detroyed
+  // when the function returns and 'client' object is detroyed  
+  
 }
+
+int steer_arduino(String code){
+  int percentage = code.substring(1).toInt();
+  percentage *= 10;
+
+  if(code.charAt(0) == '1'){
+      analogWrite(motorPin, percentage);
+  }
+  else if(code.charAt(0) == '2'){
+      analogWrite(servoPin, percentage);
+  }
+}
+
+
+
+
 
