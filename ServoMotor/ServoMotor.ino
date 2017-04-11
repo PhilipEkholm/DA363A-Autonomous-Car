@@ -15,7 +15,6 @@ void setup() {
    pinMode(dir2PinA,OUTPUT);
    pinMode(speedPinA,OUTPUT);
   steer(50);
-  motor_run(1,30);
 }
 
 /*
@@ -56,6 +55,7 @@ void motor_run(int speed, int direction){
 int counter = 0;
 
 void loop() {
+  motor_run(50,1);
  steer(counter++);
  if (counter == 100) {
   counter = 0;
