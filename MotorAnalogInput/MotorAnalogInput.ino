@@ -1,4 +1,8 @@
 // Declare L298N Dual H-Bridge Motor Controller directly since there is not a library to load.
+#include <Servo.h>
+
+Servo pointer;
+const byte servoPin = 8;
 
 const int dir1PinA = 5;
 const int dir2PinA = 3;
@@ -21,7 +25,8 @@ void setup() {  // Setup runs once per reset
   pinMode(speedPinA,OUTPUT);
   pinMode(speedInputPinA, INPUT);
   pinMode(dirInputPinA, INPUT);
-  motor_run(0,1);
+  pointer.attach(servoPin);
+  
 
 }
 
@@ -46,16 +51,30 @@ void motor_run(int speed, int direction){
     }
 }
 
+void steer(int capacity){
+    if(capacity > 85) { 
+       capacity = 85;  
+    }
+    else if (capacity < 12) {
+      capacity = 12;
+    }
+    int adjustment = 10.24 * capacity;
+    //Steering between 75 degrees and 95 degrees from car right.
+    int pos = map(adjustment, 0, 1024, 70, 90);
+    pointer.write(pos);
+}
+
 void loop() {
   sensorValue0 = analogRead(speedInputPinA);
   delay(2);
   sensorValue1 = analogRead(dirInputPinA);
   inputSpeed = map(sensorValue0, 0, 676, 0, 100);
   inputDir = map(sensorValue1, 0, 676, 0, 100);
-  delay(2);
-  motor_run(inputSpeed, 1);
+
+  steer(inputDir);
+  //motor_run(inputSpeed, 1);
   //Serial.println(inputSpeed);
-  //Serial.println(inputDir);
+  Serial.println(inputDir);
   delay(2);
   //int inputDir = analogRead(dirInputPinA)/6.75;
 

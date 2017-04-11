@@ -76,7 +76,7 @@ void loop() {
    digitalWrite(triggerPin, HIGH); //Trigger ultrasonic detection 
    delayMicroseconds(10); 
    digitalWrite(triggerPin, LOW);
-/*
+
    int distance = pulseIn(echoPin, HIGH); //Read ultrasonic reflection
    distance= distance/58; //Calculate distance 
 
@@ -88,21 +88,19 @@ void loop() {
    }
 
    if(distance > 35){
-      motor_run(255, 1);
+      motor_run(125, 1);
    }
    else if(distance <= 35){
-      motor_run(distance + 45, 1); 
+      motor_run(distance, 1); 
    }
    else if(distance <= 10){
-      motor_run(0, 0);
+      //motor_run(0, 1);
    }
-   */
- if (counter > 100) {
-    counter = 50;
-  }
-  steer(counter);
+   
+ 
+  steer(50);
   
-  counter++;
+  
   delay(100);
 }
 

@@ -1,4 +1,4 @@
-/*
+ /*
 * MotorDistance 
 * 
 * By Philip E, Henrik F
@@ -14,7 +14,7 @@ const int triggerPin = 4; //TRIG pin
 /* Motor Driver */
 const int dir1PinA = 5;
 const int dir2PinA = 3;
-const int speedPinA = 9; // Needs to be a PWM pin to be able to control motor speed
+const int speedPinA = 10; // Needs to be a PWM pin to be able to control motor speed
 
 void setup() {
    Serial.begin(9600); 
@@ -38,7 +38,7 @@ void motor_run(int speed, int direction){
         analogWrite(speedPinA, speed);//Sets speed variable via PWM 
         digitalWrite(dir1PinA, LOW);
         digitalWrite(dir2PinA, HIGH);
-        Serial.println("Motor Forward");
+      //  Serial.println(speed);
     }
     else if (direction == 0) {
         analogWrite(speedPinA, speed);
@@ -64,16 +64,15 @@ void loop() {
       Serial.println(distance);
    }
 
-   if(distance > 35){
-      motor_run(255, 1);
+   if(distance > 35 ) {
+      motor_run(50, 1);
    }
-   else if(distance <= 35){
-      motor_run(distance + 45, 1); 
+   else if(distance <= 35 ){
+      motor_run(distance+15, 1); 
    }
    else if(distance <= 10){
-      motor_run(0, 0);
+      motor_run(0, 1);
    }
-   
    delay(100);
 }
 
