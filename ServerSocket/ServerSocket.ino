@@ -9,8 +9,8 @@
 
 #include <ESP8266WiFi.h>
 
-const char* ssid = "Ekholm";
-const char* password = "Koenigsegg";
+const char* ssid = "fille";
+const char* password = "";
 const int motorPin = 0;
 const int servoPin = 15;
 
@@ -74,7 +74,7 @@ void loop() {
   // Read the first line of the request
   req = client.readStringUntil('\r');
   Serial.println(req);
-  protoCode_to_pwm(req);
+  steer_arduino(req);
   client.flush();
   
   client.flush();
