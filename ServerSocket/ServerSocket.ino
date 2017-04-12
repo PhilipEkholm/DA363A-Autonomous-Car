@@ -9,7 +9,7 @@
 
 #include <ESP8266WiFi.h>
 
-const char* ssid = "fille";
+const char* ssid = "NETGEAR";
 const char* password = "";
 const int motorPin = 0;
 const int servoPin = 15;
@@ -18,7 +18,7 @@ boolean alreadyConnected = false; // whether or not the client was connected pre
 
 // Create an instance of the server
 // specify the port to listen on as an argument
-WiFiServer server(4444);
+WiFiServer server(5555);
 
 void setup() {
   Serial.begin(115200);
