@@ -17,9 +17,11 @@ const byte servoPin = 8;
 const byte dir1PinA = 5;  //Backwards pin
 const byte dir2PinA = 3; //Forwards pin
 const byte speedPinA = 11; // Needs to be a PWM pin to be able to control motor speed
+int command = 0;
+int time = 50;
 
 void setup(){
-   Serial.begin(9600); 
+   Serial.begin(115200); 
     
    //Define L298N Dual H-Bridge Motor Controller Pins
 
@@ -33,14 +35,16 @@ void setup(){
 }
 
 void loop(){
-    String command = "";
-  
-    // send data only when you receive data:
-    if (Serial.available() > 0) {
-        // read the incoming byte:
-        command = Serial.readString();
-        send_command(command, 50);
+    if (Serial.available() > 0){
+      command = Serial.read();
     }
+    
+    send_command(command,time);
+}
+
+void reset(){
+  motor_run(0, 0, 50);
+  steer(50, 50);
 }
 
 /*
@@ -77,7 +81,7 @@ void steer(int capacity, int time){
     delay(time);
 }
 
-void send_command(String command, int time){
+/*void send_command(String command, int time){
     if(command.charAt(0) == '1'){
         motor_run(command.substring(1).toInt(), 1, time);
     }
@@ -91,5 +95,37 @@ void send_command(String command, int time){
         Serial.println("Invalid command");
     }
 }
+*/
+void send_command(int command, int time){
+  switch (command){
 
+     //reset command
+     case 0: reset(); break;
+
+     // single command
+     case 1: motor_run(100, 1, time); 
+        break;
+     case 2: motor_run(100, 0, time);
+        break;
+     case 3: steer(0, time); 
+        break;
+     case 4: steer(100, time); 
+        break;
+
+     //combination command
+     case 6: motor_run(100, 1, time);
+             steer(0, time);
+             break;
+     case 7: motor_run(100, 1, time);
+             steer(100,time);
+             break;
+     case 8: motor_run(100, 0, time);
+             steer(0,time);
+             break;
+     case 9: motor_run(100, 0, time);
+             steer(100,time);
+             break;
+     default: Serial.print("Invalid Command\n");
+    }
+}
 
