@@ -75,7 +75,8 @@ void steer(int capacity, int time){
     int adjustment = 10.24 * capacity;
     
     //Steering between 75 degrees and 95 degrees from car right.
-    int pos = map(adjustment, 0, 1024, 70, 95);
+    //(10 degrees from the normal)
+    int pos = map(adjustment, 0, 1024, 75, 95);
     pointer.write(pos);
 
     delay(time);
@@ -103,9 +104,9 @@ void send_command(int command, int time){
      case 0: reset(); break;
 
      // single command
-     case 1: motor_run(100, 1, time); 
+     case 1: motor_run(255, 1, time); 
         break;
-     case 2: motor_run(100, 0, time);
+     case 2: motor_run(255, 0, time);
         break;
      case 3: steer(0, time); 
         break;
@@ -113,16 +114,16 @@ void send_command(int command, int time){
         break;
 
      //combination command
-     case 6: motor_run(100, 1, time);
+     case 6: motor_run(255, 1, time);
              steer(0, time);
              break;
-     case 7: motor_run(100, 1, time);
+     case 7: motor_run(255, 1, time);
              steer(100,time);
              break;
-     case 8: motor_run(100, 0, time);
+     case 8: motor_run(255, 0, time);
              steer(0,time);
              break;
-     case 9: motor_run(100, 0, time);
+     case 9: motor_run(255, 0, time);
              steer(100,time);
              break;
      default: Serial.print("Invalid Command\n");
