@@ -10,6 +10,15 @@ import math
 # distance data measured by ultrasonic sensor
 sensor_data = " "
 
+class ClientHandler(SocketServer.BaseRequestHandler):
+    def handle(self):
+        # self.request is the TCP socket connected to the client
+        self.data = self.request.recv(1024).strip()
+        print "{} wrote:".format(self.client_address[0])
+        print self.data
+        # just send back the same data, but upper-cased
+        self.request.sendall(self.data.upper())
+
 
 class NeuralNetwork(object):
 
@@ -47,14 +56,16 @@ class RCControl(object):
     def stop(self):
         self.serial_port.write(chr(0))
 
+#Detect the distance to the camera, using input values
+#from the calibration
 
 class DistanceToCamera(object):
 
     def __init__(self):
         # camera params
         self.alpha = 8.0 * math.pi / 180
-        self.v0 = 119.865631204
-        self.ay = 332.262498472
+        self.v0 = 552.952929889 #Overriden
+        self.ay = 1477.02659935 #Overriden
 
     def calculate(self, v, h, x_shift, image):
         # compute and return the distance from the target point to the camera
@@ -274,18 +285,42 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
 
 class ThreadServer(object):
 
-    def server_thread(host, port):
+    '''def server_thread(host, port):
         server = SocketServer.TCPServer((host, port), VideoStreamHandler)
         server.serve_forever()
 
     def server_thread2(host, port):
         server = SocketServer.TCPServer((host, port), SensorDataHandler)
+        server.serve_forever()'''
+
+    def server_thread3(host, port):
+        server = SocketServer.TCPServer((host, port), ClientHandler)
         server.serve_forever()
 
-    distance_thread = threading.Thread(target=server_thread2, args=('192.168.1.100', 8002))
+    '''distance_thread = threading.Thread(target=server_thread2, args=('192.168.1.100', 8002))
     distance_thread.start()
     video_thread = threading.Thread(target=server_thread('192.168.1.100', 8000))
-    video_thread.start()
+    video_thread.start()'''
+    client_thread = threading.Thread(target=server_thread3, args=('192.168.20.175', 8001))
+
 
 if __name__ == '__main__':
     ThreadServer()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

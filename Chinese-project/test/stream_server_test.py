@@ -9,7 +9,7 @@ class VideoStreamingTest(object):
     def __init__(self):
 
         self.server_socket = socket.socket()
-        self.server_socket.bind(('192.168.0.3', 8000))
+        self.server_socket.bind(('192.168.0.5', 8000))
         self.server_socket.listen(0)
         self.connection, self.client_address = self.server_socket.accept()
         self.connection = self.connection.makefile('rb')

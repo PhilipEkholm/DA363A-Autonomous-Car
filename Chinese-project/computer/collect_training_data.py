@@ -7,6 +7,8 @@ import pygame
 from pygame.locals import *
 import socket
 
+#Modified
+
 
 class CollectTrainingData(object):
     
