@@ -1,4 +1,4 @@
-__author__ = 'zhengwang'
+__author__ = 'Philip Ekholm'
 
 import threading
 import SocketServer
@@ -6,9 +6,26 @@ import serial
 import cv2
 import numpy as np
 import math
+from flask import Flask, jsonify, render_template, request
 
 # distance data measured by ultrasonic sensor
 sensor_data = " "
+app = Flask(__name__)
+
+class ClientHandler(object):
+    @app.route('/_add_numbers')
+    def add_numbers():
+        key = request.args.get('key', 0)
+        return jsonify(result = key)
+
+
+    @app.route('/')
+    def index():
+        return render_template('index.html')
+
+    def __init__(self):
+        if __name__ == '__main__':
+            app.run()
 
 class ClientHandler(SocketServer.BaseRequestHandler):
     def handle(self):
@@ -297,12 +314,25 @@ class ThreadServer(object):
         server = SocketServer.TCPServer((host, port), ClientHandler)
         server.serve_forever()
 
+<<<<<<< HEAD
     '''distance_thread = threading.Thread(target=server_thread2, args=('192.168.1.100', 8002))
     distance_thread.start()
     video_thread = threading.Thread(target=server_thread('192.168.1.100', 8000))
     video_thread.start()'''
     client_thread = threading.Thread(target=server_thread3, args=('192.168.20.175', 8001))
 
+=======
+    def server_thread3():
+        server = ClientHandler()
+
+
+    #distance_thread = threading.Thread(target=server_thread2, args=('192.168.1.100', 8002))
+    #distance_thread.start()
+    #video_thread = threading.Thread(target=server_thread('192.168.1.100', 8000))
+    #video_thread.start()
+    client_thread = threading.Thread(target=server_thread3())
+    client_thread.start()
+>>>>>>> master
 
 if __name__ == '__main__':
     ThreadServer()
