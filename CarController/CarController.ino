@@ -45,7 +45,7 @@ void loop(){
 
 void reset(){
   motor_run(0, 0, 50);
-  steer(50, 50);
+  steer(60, 50);
 }
 
 /*
@@ -70,14 +70,14 @@ void motor_run(int speed, int direction, int time){
 
 void steer(int capacity, int time){
     if(capacity > 100 || capacity < 0){
-       capacity = 50;
+       capacity = 60;
     }
     
     int adjustment = 10.24 * capacity;
     
-    //Steering between 75 degrees and 95 degrees from car right.
-    //(10 degrees from the normal)
-    int pos = map(adjustment, 0, 1024, 75, 95);
+    //Steering between 65 degrees and 105 degrees from car right.
+    //(20 degrees from the normal)
+    int pos = map(adjustment, 0, 1024, 65, 105);
     pointer.write(pos);
 
     delay(time);
