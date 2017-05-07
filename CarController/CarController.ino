@@ -17,6 +17,7 @@ const byte servoPin = 8;
 const byte dir1PinA = 5;  //Backwards pin
 const byte dir2PinA = 3; //Forwards pin
 const byte speedPinA = 11; // Needs to be a PWM pin to be able to control motor speed
+const byte motorSpeed = 200; //Change motor speed
 int command = 0;
 int time = 50;
 
@@ -44,7 +45,7 @@ void loop(){
 
 void reset(){
   motor_run(0, 0, 50);
-  steer(50, 50);
+  steer(60, 50);
 }
 
 /*
@@ -69,14 +70,14 @@ void motor_run(int speed, int direction, int time){
 
 void steer(int capacity, int time){
     if(capacity > 100 || capacity < 0){
-       capacity = 50;
+       capacity = 60;
     }
     
     int adjustment = 10.24 * capacity;
     
-    //Steering between 75 degrees and 95 degrees from car right.
-    //(10 degrees from the normal)
-    int pos = map(adjustment, 0, 1024, 75, 95);
+    //Steering between 65 degrees and 105 degrees from car right.
+    //(20 degrees from the normal)
+    int pos = map(adjustment, 0, 1024, 65, 105);
     pointer.write(pos);
 
     delay(time);
@@ -104,9 +105,9 @@ void send_command(int command, int time){
      case 0: reset(); break;
 
      // single command
-     case 1: motor_run(255, 1, time); 
+     case 1: motor_run(motorSpeed, 1, time); 
         break;
-     case 2: motor_run(255, 0, time);
+     case 2: motor_run(motorSpeed, 0, time);
         break;
      case 3: steer(0, time); 
         break;
@@ -114,17 +115,17 @@ void send_command(int command, int time){
         break;
 
      //combination command
-     case 6: motor_run(255, 1, time);
+     case 6: motor_run(motorSpeed, 1, time);
              steer(0, time);
              break;
-     case 7: motor_run(255, 1, time);
+     case 7: motor_run(motorSpeed, 1, time);
              steer(100,time);
              break;
-     case 8: motor_run(255, 0, time);
-             steer(0,time);
+     case 8: steer(0,time);
+             motor_run(motorSpeed, 0, time);
              break;
-     case 9: motor_run(255, 0, time);
-             steer(100,time);
+     case 9: steer(100,time);
+             motor_run(motorSpeed, 0, time);
              break;
      default: Serial.print("Invalid Command\n");
     }

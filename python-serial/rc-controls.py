@@ -9,7 +9,6 @@ class RCTest(object):
 
     def __init__(self):
         pygame.init()
-        #Change later
         self.ser = serial.Serial('/dev/tty.usbmodem1411', 115200, timeout=1)
         self.send_inst = True
         self.steer()
@@ -65,6 +64,7 @@ class RCTest(object):
 
                 elif event.type == pygame.KEYUP:
                     self.ser.write(chr(0))
+                    print 'None'
 
 if __name__ == '__main__':
     RCTest()
