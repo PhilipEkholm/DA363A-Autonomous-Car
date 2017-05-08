@@ -17,7 +17,7 @@ const byte servoPin = 8;
 const byte dir1PinA = 5;  //Backwards pin
 const byte dir2PinA = 3; //Forwards pin
 const byte speedPinA = 11; // Needs to be a PWM pin to be able to control motor speed
-const byte motorSpeed = 200; //Change motor speed
+const byte motorSpeed = 255; //Change motor speed
 int command = 0;
 int time = 50;
 
