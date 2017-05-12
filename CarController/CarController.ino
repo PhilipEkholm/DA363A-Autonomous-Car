@@ -18,7 +18,9 @@ const byte dir1PinA = 5;  //Backwards pin
 const byte dir2PinA = 3; //Forwards pin
 const byte speedPinA = 11; // Needs to be a PWM pin to be able to control motor speed
 const byte motorSpeed = 255; //Change motor speed
+const byte middlePointServo = 50;
 int command = 0;
+int lastCommand = 0;
 int time = 50;
 
 void setup(){
@@ -32,7 +34,7 @@ void setup(){
    pointer.attach(servoPin);
 
    motor_run(0, 1, 10);
-   steer(50, 10);
+   steer(middlePointServo, 10);
 }
 
 void loop(){
@@ -41,11 +43,13 @@ void loop(){
     }
     
     send_command(command,time);
+    lastCommand = command;
 }
 
 void reset(){
   motor_run(0, 0, 50);
-  steer(60, 50);
+  
+  steer(middlePointServo, 50);
 }
 
 /*
@@ -70,34 +74,19 @@ void motor_run(int speed, int direction, int time){
 
 void steer(int capacity, int time){
     if(capacity > 100 || capacity < 0){
-       capacity = 60;
+       capacity = middlePointServo;
     }
     
     int adjustment = 10.24 * capacity;
     
     //Steering between 65 degrees and 105 degrees from car right.
     //(20 degrees from the normal)
-    int pos = map(adjustment, 0, 1024, 65, 105);
+    int pos = map(adjustment, 0, 1023, 55, 105);
     pointer.write(pos);
 
     delay(time);
 }
 
-/*void send_command(String command, int time){
-    if(command.charAt(0) == '1'){
-        motor_run(command.substring(1).toInt(), 1, time);
-    }
-    else if(command.charAt(0) == '2'){
-        steer(command.substring(1).toInt(), time);
-    }
-    else if(command.charAt(0) == '3'){
-        motor_run(command.substring(1).toInt(), 0, time);
-    }
-    else{
-        Serial.println("Invalid command");
-    }
-}
-*/
 void send_command(int command, int time){
   switch (command){
 
