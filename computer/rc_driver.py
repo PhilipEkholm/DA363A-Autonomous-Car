@@ -4,6 +4,7 @@ import serial
 import cv2
 import numpy as np
 import math
+import Socket
 
 # distance data measured by ultrasonic sensor
 sensor_data = " "
@@ -26,23 +27,27 @@ class NeuralNetwork(object):
 
 class RCControl(object):
     def __init__(self):
-        self.serial_port = serial.Serial('/dev/tty.usbmodem1411', 115200, timeout=1)
+        TCP_IP = ''
+		TCP_PORT =5555
+		self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		selfs.connect(TCP_IP, TCP_PORT)
 
     def steer(self, prediction):
+	
         if prediction == 2:
-            self.serial_port.write(chr(1))
+            self.s.send(chr(1))
             print("Forward")
         elif prediction == 0:
-            self.serial_port.write(chr(7))
+            self.s.send(chr(7))
             print("Left")
         elif prediction == 1:
-            self.serial_port.write(chr(6))
+            self.s.send(chr(6))
             print("Right")
         else:
             self.stop()
 
     def stop(self):
-        self.serial_port.write(chr(0))
+        self.s.send(chr(0))
 
 
 class DistanceToCamera(object):
