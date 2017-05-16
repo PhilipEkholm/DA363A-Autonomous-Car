@@ -154,7 +154,7 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
     rc_car = RCControl()
 
     # cascade classifiers
-    stop_cascade = cv2.CascadeClassifier('cascade_xml/danial.xml')
+    stop_cascade = cv2.CascadeClassifier('cascade_xml/righthaar.xml')
     light_cascade = cv2.CascadeClassifier('cascade_xml/traffic_light.xml')
 
     d_to_camera = DistanceToCamera()
@@ -209,7 +209,7 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
                     prediction = self.model.predict(image_array)
 
                     # stop conditions
-                    if sensor_data is not None and sensor_data < 30:
+                    if sensor_data is not None and 5 < sensor_data < 30:
                         print("Stop, obstacle in front")
                         self.rc_car.stop()
                     
