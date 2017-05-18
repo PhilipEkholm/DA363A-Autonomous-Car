@@ -11,15 +11,15 @@
 #include <Servo.h> 
  
 Servo pointer; 
-const byte servoPin = 8;  
+const byte SERVO_PIN = 8;  
  
 /* Motor Driver */ 
-const byte dir1PinA = 5;  //Backwards pin 
-const byte dir2PinA = 3; //Forwards pin 
-const byte speedPinA = 11; // Needs to be a PWM pin to be able to control motor speed 
-const byte motorSpeed = 200; //Change motor speed 
+const byte DIR1_PINA = 5;  //Backwards pin 
+const byte DIR2_PINA = 3; //Forwards pin 
+const byte SPEED_PINA = 11; // Needs to be a PWM pin to be able to control motor speed 
+const byte MOTOR_SPEED = 200; //Change motor speed 
 //50 
-const byte middlePointServo = 46; 
+const byte MIDDLE_POINT_SERVO = 46; 
 int command = 0; 
 int lastCommand = 0; 
 int time = 50; 
@@ -29,13 +29,13 @@ void setup(){
 	 
 	//Define L298N Dual H-Bridge Motor Controller Pins 
 
-	pinMode(dir1PinA,OUTPUT); 
-	pinMode(dir2PinA,OUTPUT); 
-	pinMode(speedPinA,OUTPUT); 
-	pointer.attach(servoPin); 
+	pinMode(DIR1_PINA,OUTPUT); 
+	pinMode(DIR2_PINA,OUTPUT); 
+	pinMode(SPEED_PINA,OUTPUT); 
+	pointer.attach(SERVO_PIN); 
 
 	motor_run(0, 1, 10); 
-	steer(middlePointServo, 10); 
+	steer(MIDDLE_POINT_SERVO, 10); 
 } 
  
 void loop(){ 
@@ -50,7 +50,7 @@ void loop(){
 void reset(){ 
 	motor_run(0, 0, 50); 
 
-	steer(middlePointServo, 50);
+	steer(MIDDLE_POINT_SERVO, 50);
 } 
  
 /* 
@@ -60,14 +60,14 @@ void reset(){
 
 void motor_run(int speed, int direction, int time){ 
     if(direction == 1){ 
-        analogWrite(speedPinA, speed);//Sets speed variable via PWM  
-        digitalWrite(dir1PinA, LOW); 
-        digitalWrite(dir2PinA, HIGH); 
+        analogWrite(SPEED_PINA, speed);//Sets speed variable via PWM  
+        digitalWrite(DIR1_PINA, LOW); 
+        digitalWrite(DIR2_PINA, HIGH); 
     } 
     else if (direction == 0) { 
-        analogWrite(speedPinA, speed); 
-        digitalWrite(dir1PinA, HIGH); 
-        digitalWrite(dir2PinA, LOW); 
+        analogWrite(SPEED_PINA, speed); 
+        digitalWrite(DIR1_PINA, HIGH); 
+        digitalWrite(DIR2_PINA, LOW); 
     } 
  
     delay(time); 
@@ -75,7 +75,7 @@ void motor_run(int speed, int direction, int time){
 
 void steer(int capacity, int time){ 
     if(capacity > 100 || capacity < 0){ 
-       capacity = middlePointServo; 
+       capacity = MIDDLE_POINT_SERVO; 
     } 
      
     int adjustment = 10.24 * capacity; 
@@ -96,10 +96,10 @@ void send_command(int command, int time){
  
      // single command 
      case 1: 
-     	motor_run(motorSpeed, 1, time);  
+     	motor_run(MOTOR_SPEED, 1, time);  
         break; 
      case 2: 
-     	motor_run(motorSpeed, 0, time); 
+     	motor_run(MOTOR_SPEED, 0, time); 
         break; 
      case 3: 
      	steer(0, time);  
@@ -110,20 +110,20 @@ void send_command(int command, int time){
  
      //combination command 
      case 6: 
-     	motor_run(motorSpeed, 1, time); 
+     	motor_run(MOTOR_SPEED, 1, time); 
         steer(0, time); 
         break; 
      case 7: 
-     	motor_run(motorSpeed, 1, time); 
+     	motor_run(MOTOR_SPEED, 1, time); 
         steer(100,time); 
         break; 
      case 8: 
      	steer(0,time); 
-        motor_run(motorSpeed, 0, time); 
+        motor_run(MOTOR_SPEED, 0, time); 
         break; 
      case 9: 
      	steer(100,time); 
-        motor_run(motorSpeed, 0, time); 
+        motor_run(MOTOR_SPEED, 0, time); 
         break; 
      default: Serial.print("Invalid Command\n"); 
     } 
