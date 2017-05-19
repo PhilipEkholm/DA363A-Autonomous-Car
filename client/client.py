@@ -15,11 +15,10 @@ if __name__ == '__main__':
 	con = ClientConnection('192.168.20.164', 8001)
 
 	while True:
-		n = input('Enter a number')
+		n = raw_input('Enter a number\n')
 
 		if n == 'q':
 			break
 
-		con.send(n)
-
 	con.close()
+	print 'Finished'

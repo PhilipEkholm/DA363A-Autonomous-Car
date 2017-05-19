@@ -159,7 +159,7 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
     rc_car = RCControl()
 
     # cascade classifiers
-    stop_cascade = cv2.CascadeClassifier('cascade_xml/righthaar.xml')
+    stop_cascade = cv2.CascadeClassifier('cascade_xml/stopsign.xml')
     light_cascade = cv2.CascadeClassifier('cascade_xml/traffic_light.xml')
 
     d_to_camera = DistanceToCamera()

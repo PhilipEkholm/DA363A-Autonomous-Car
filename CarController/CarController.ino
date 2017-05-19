@@ -17,9 +17,10 @@ const byte SERVO_PIN = 8;
 const byte DIR1_PINA = 5;  //Backwards pin 
 const byte DIR2_PINA = 3; //Forwards pin 
 const byte SPEED_PINA = 11; // Needs to be a PWM pin to be able to control motor speed 
-const byte MOTOR_SPEED = 200; //Change motor speed 
+const byte MOTOR_SPEED = 170; //Change motor speed 
+const byte CURVE_SPEED = 230; //Increase the speed in the curves
 //50 
-const byte MIDDLE_POINT_SERVO = 46; 
+const byte MIDDLE_POINT_SERVO = 50;
 int command = 0; 
 int lastCommand = 0; 
 int time = 50; 
