@@ -12,6 +12,12 @@ import java.net.UnknownHostException;
 
 import javax.swing.*;
 
+/**
+ * Control-client that shows a frame with different buttons that imitate directions, stop and different speed.
+ * when a specific button is clicked or aktivated a message is sent throw a socket to the server
+ * @author Johan
+ *
+ */
 public class Window extends JPanel implements ActionListener{
 	private Socket gSocket = null;
 	private PrintWriter out = null;
@@ -23,6 +29,13 @@ public class Window extends JPanel implements ActionListener{
 	private JButton v2 = new JButton("2");
 	private JButton v3 = new JButton("3");
 	
+	
+	/**
+	 * The constructor create a socket and bond it to the specified host and port
+	 * It also construct the frame and its apperance 
+	 * @param ip the host name or ip address
+	 * @param port the port number at witch the socket will communicate thru
+	 */
 	public Window(String ip, int port){
 		try {
 			gSocket = new Socket(ip, port);
@@ -72,7 +85,9 @@ public class Window extends JPanel implements ActionListener{
 		JOptionPane.showMessageDialog(null, panel);
 		
 	}
-	
+	/**
+	 * action listners to listen to each button and send streamdata to the server 
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==v1){
 			out.println("120");	

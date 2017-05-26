@@ -4,6 +4,11 @@ package p1;
 import java.io.*;
 import java.net.*;
 
+/**
+ * A test client made to test whether or not the TCPserver could connect to it and communicate .
+ * @author Johan
+ *
+ */
 class Testklient{
 
 	public static void main(String args[]) throws Exception{

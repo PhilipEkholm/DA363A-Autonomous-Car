@@ -3,6 +3,11 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * The class is a server that uses two socketserver. One for a the car-client and the other is for a control-client.  
+ * @author johan
+ *
+ */
 public class Server {
 	private InnerServerCar car;
 	private InnerServerWindow window;
@@ -18,22 +23,29 @@ public class Server {
 		
 		
 	}
-	// fixa threads s� man kan aktivera inreklasserna nadnjsndn
-	
-	public void handleCarMess(int mess){
-	}
-	
+	/**	
+	 * the method work as tunnel as it transport the message from Window(control client) to car-client
+	 * @param mess the message it will transport
+	 */
 	public  void windowToCar(String mess){
 		car.toCar(mess);
 		System.out.println(mess);
 	}
-	
+	/**
+	 * An inner class connected to a socket-client (car-client). It is made to communicate with the car-client.
+	 * @author johan
+	 *
+	 */
 	public class InnerServerCar implements Runnable {
 		private Socket clientSocket = null;
 		private ServerSocket serverSocket = null;
 		private PrintWriter outCar = null;
 		private BufferedReader inCar = null;
 
+		/**
+		 * create a socket and bond it to to the specific port
+		 * @param port the number of the port 
+		 */
 		public InnerServerCar(int port) {
 
 			try {
@@ -46,7 +58,9 @@ public class Server {
 			new Thread(this).start();
 
 		}
-
+		/**
+		 * connect clientsocket to serversocket and create outputstream (PrintWriter) and inpustream( BufferReader)
+		 */
 		public void handleClient() {
 			try {
 				clientSocket = serverSocket.accept();
@@ -57,7 +71,10 @@ public class Server {
 			}
 		}
 
-		@Override
+		/**
+		 * the method run start runing the thread 
+		 * listen to incoming stream from carclient and print it o the monitor
+		 */
 		public void run() {
 			try {
 				String mess;
@@ -72,6 +89,10 @@ public class Server {
 			}
 
 		}
+		/**
+		 * Send stream to carclient.
+		 * @param mess String mess is the message to be send send as a stream to carclient 
+		 */
 		public void toCar(String mess){
 			outCar.println(mess);
 			System.out.println(mess+"outCar.println(mess)"+"to car");
@@ -89,6 +110,13 @@ public class Server {
 		
 
 	}
+	/**
+	 * 
+	 * An inner class connected to a socket-client (Window-client/ controlclient). It is made to communicate with the control-client.
+	 * @author Johan
+	 *
+	 *
+	 */
 	 public class InnerServerWindow implements Runnable{
 		 private Socket clientSocketW = null;
 			private ServerSocket serverSocketW = null;
@@ -96,7 +124,10 @@ public class Server {
 			private BufferedReader inCarW = null;
 			
 			
-			
+			/**
+			 * create a socket and bond it to to the specific port
+			 * @param port the number of the port 
+			 */
 			public InnerServerWindow(int port) {
 				try {
 					serverSocketW = new ServerSocket(port);
@@ -108,6 +139,9 @@ public class Server {
 				new Thread(this).start();
 				
 			}
+			/**
+			 * connect clientsocket to serversocket and create outputstream (PrintWriter) and inpustream( BufferReader)
+			 */
 			public void handleClient(){
 				try {
 					clientSocketW= serverSocketW.accept();
@@ -119,6 +153,11 @@ public class Server {
 					System.out.println("n�got med window porten");
 				}
 			}
+			/**
+			 * the method run start runing the thread 
+			 * listen to incoming stream from Controlclient and print it o the monitor before sending it to WindowToCar method
+			 * witch transport to carsocket
+			 */
 			public void run() {
 				try {
 					String mess;
