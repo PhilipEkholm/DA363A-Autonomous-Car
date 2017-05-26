@@ -17,8 +17,7 @@ const byte SERVO_PIN = 8;
 const byte DIR1_PINA = 5;  //Backwards pin 
 const byte DIR2_PINA = 3; //Forwards pin 
 const byte SPEED_PINA = 11; // Needs to be a PWM pin to be able to control motor speed 
-const byte MOTOR_SPEED = 170; //Change motor speed 
-const byte CURVE_SPEED = 230; //Increase the speed in the curves
+const byte MOTOR_SPEED = 195; //Change motor speed 
 //50 
 const byte MIDDLE_POINT_SERVO = 50;
 int command = 0; 
@@ -123,8 +122,8 @@ void send_command(int command, int time){
         motor_run(MOTOR_SPEED, 0, time); 
         break; 
      case 9: 
-     	steer(100,time); 
-        motor_run(MOTOR_SPEED, 0, time); 
+     	steer(100,time);
+        motor_run(MOTOR_SPEED, 0, time);
         break; 
      default: Serial.print("Invalid Command\n"); 
     } 

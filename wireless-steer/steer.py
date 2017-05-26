@@ -10,7 +10,7 @@ import threading
 
 class GetInput(object):
 	def __init__(self):
-		host, port = '192.168.20.164', 8001
+		host, port = '192.168.0.3', 8001
 
 		# Create a socket (SOCK_STREAM means a TCP socket)
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

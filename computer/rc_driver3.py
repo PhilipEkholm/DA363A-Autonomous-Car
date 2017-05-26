@@ -27,7 +27,7 @@ class NeuralNetwork(object):
 
 class RCControl(object):
     def __init__(self):
-        TCP_IP = '192.168.20.164'
+        TCP_IP = '169.254.230.248'
         TCP_PORT = 8001
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.connect((TCP_IP, TCP_PORT))
@@ -54,7 +54,7 @@ class DistanceToCamera(object):
 
     def __init__(self):
         # camera params
-        self.alpha = 10.0 * math.pi / 180
+        self.alpha = 8.0 * math.pi / 180
         self.v0 = 119.865631204
         self.ay = 332.262498472
 
@@ -103,11 +103,11 @@ class ObjectDetection(object):
             
              # turn right sign
             elif width/height == 1 and sign == 2:
-                cv2.putText(image, 'RIGHT', (x_pos, y_pos-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                cv2.putText(image, 'RIGHT', (x_pos, y_pos-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
             # turn left sign
             elif width/height == 1 and sign == 3:
-                cv2.putText(image, 'LEFT', (x_pos, y_pos-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                cv2.putText(image, 'LEFT', (x_pos, y_pos-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
             
         return v
 
@@ -164,6 +164,8 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
         global sensor_data
         stream_bytes = ' '
         stop_flag = False
+        turn_left_flag = False
+        turn_right_flag = False
         stop_sign_active = True
 
         # stream video frames one by one
@@ -230,10 +232,39 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
 
                     elif 0 < self.d_right_sign < 25:
                         print("Turn right ahead")
+                        self.rc_car.steer(1)
+
+                        #Turn right for a couple seconds
+                        if turn_right_flag is False:
+                            self.right_start = cv2.getTickCount()
+                            turn_right_flag = True
+                        self.right_finish = cv2.getTickCount()
+
+                        self.right_time = (self.right_finish - self.right_start)/cv2.getTickFrequency()
+                        print "Turn time: %.2fs" % self.right_time
+
+                        if self.right_time > 2:
+                            print('Turned right for 2 seconds')
+                            self.d_right_sign = 25
+                            turn_right_flag = False
 
                     elif 0 < self.d_left_sign < 25:
                         print("Turn left ahead")
+                        self.rc_car.steer(0)
 
+                        #Turn left for a couple of seconds
+                        if turn_left_flag is False:
+                            self.left_start = cv2.getTickCount()
+                            turn_left_flag = True
+                        self.left_finish = cv2.getTickCount()
+
+                        self.left_time = (self.left_finish - self.left_start)/cv2.getTickFrequency()
+                        print "Turn time: %.2fs" % self.left_time
+
+                        if self.left_time > 2:
+                            print('Turned left for 2 seconds')
+                            self.d_left_sign = 25
+                            turn_left_flag = False
 
                     elif 0 < self.d_light < 30:
                         #print("Traffic light ahead")
@@ -282,9 +313,9 @@ class ThreadServer(object):
         server = SocketServer.TCPServer((host, port), SensorDataHandler)
         server.serve_forever()
 
-    distance_thread = threading.Thread(target=server_thread2, args=('192.168.20.175', 8002))
+    distance_thread = threading.Thread(target=server_thread2, args=('169.254.167.89', 8002))
     distance_thread.start()
-    video_thread = threading.Thread(target=server_thread('192.168.20.175', 8000))
+    video_thread = threading.Thread(target=server_thread('169.254.167.89', 8000))
     video_thread.start()
 
 if __name__ == '__main__':

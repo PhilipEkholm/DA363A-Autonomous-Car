@@ -168,7 +168,14 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
                     jpg = stream_bytes[first:last+2]
                     stream_bytes = stream_bytes[last+2:]
                     gray = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.CV_LOAD_IMAGE_GRAYSCALE)
-                    image = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.CV_LOAD_IMAGE_UNCHANGED)
+                    image = cv2.imdecod # distance measurement
+                    if v_param1 > 0 or v_param2 > 0 or v_param3 > 0:
+                        d1 = self.d_to_camera.calculate(v_param1, self.h1, 300, image)
+                        d2 = self.d_to_camera.calculate(v_param2, self.h1, 300, image)
+                        d3 = self.d_to_camera.calculate(v_param3, self.h1, 300, image)
+                        self.d_stop_sign = d1
+                        self.d_right_sign = d2
+                        self.d_left_sign = d3e(np.fromstring(jpg, dtype=np.uint8), cv2.CV_LOAD_IMAGE_UNCHANGED)
 
                     # lower half of the image
                     half_gray = gray[120:240, :]
@@ -178,14 +185,7 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
                     v_param2 = self.obj_detection.detect(self.right_cascade,gray, image, 2)
                     v_param3 = self.obj_detection.detect(self.left_cascade,gray, image, 3)
 
-                    # distance measurement
-                    if v_param1 > 0 or v_param2 > 0 or v_param3 > 0:
-                        d1 = self.d_to_camera.calculate(v_param1, self.h1, 300, image)
-                        d2 = self.d_to_camera.calculate(v_param2, self.h1, 300, image)
-                        d3 = self.d_to_camera.calculate(v_param3, self.h1, 300, image)
-                        self.d_stop_sign = d1
-                        self.d_right_sign = d2
-                        self.d_left_sign = d3
+                   
 
                     cv2.imshow('image', image)
                     #cv2.imshow('mlp_image', half_gray)

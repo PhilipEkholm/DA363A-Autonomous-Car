@@ -12,7 +12,7 @@ class CollectTrainingData(object):
     def __init__(self):
 
         self.server_socket = socket.socket()
-        self.server_socket.bind(('192.168.20.175', 8000))
+        self.server_socket.bind(('192.168.0.2', 8000))
         self.server_socket.listen(0)
 
         # accept a single connection
@@ -141,7 +141,7 @@ class CollectTrainingData(object):
             train_labels = label_array[1:, :]
 
             # save training data as a numpy file
-            np.savez('training_data_temp/test05.npz', train=train, train_labels=train_labels)
+            np.savez('training_data_temp/test08.npz', train=train, train_labels=train_labels)
 
             e2 = cv2.getTickCount()
             # calculate streaming duration
