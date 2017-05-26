@@ -80,10 +80,14 @@ void steer(int capacity, int time){
      
     int adjustment = 10.24 * capacity; 
      
-    //Steering between 65 degrees and 105 degrees from car right. 
-    //(20 degrees from the normal)
+    /*
+    *   Steering was adjusted several times to meet the needs
+    *   of accurate steering. The servo can be steered up to 
+    *   55 degrees in one direction and 105 in the other,
+    *   and is mapped accordingly to the map-function.
+    */
     int pos = map(adjustment, 0, 1023, 55, 105);
-    pointer.write(pos); 
+    pointer.write(pos);
  
     delay(time); 
 } 
