@@ -1,1 +1,1 @@
-This is the Arduino-code to be flashed to the Arduino Uno card.
+This is the Arduino-code to be flashed to the Arduino Uno card. Can be flashed with bootloader.

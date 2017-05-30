@@ -9,7 +9,6 @@ from socket import *
 import time
 import RPi.GPIO as GPIO
 
-
 GPIO.setwarnings(False)
 
 # create a socket and bind socket to the host
@@ -18,24 +17,26 @@ client_socket.connect(('192.168.0.2', 8002))
 
 def measure():
     """
-    measure distance
+    measure
+    
+    measure the time it takes for a pulse to be sent and later on returned
+    
+    Returns:
+        float -- the distance of object in centimeters.
     """
     GPIO.output(GPIO_TRIGGER, True)
-    time.sleep(0.00001)
+    time.sleep(0.00001)     #Wait for ultrasonic device to react in 10 nanoseconds
     GPIO.output(GPIO_TRIGGER, False)
-    start = time.time()
+    start = time.time() #Take current time
 
     while GPIO.input(GPIO_ECHO)==0:
-
-
         start = time.time()
-
 
     while GPIO.input(GPIO_ECHO)==1:
         stop = time.time()
 
-    elapsed = stop-start
-    distance = (elapsed * 34300)/2
+    elapsed = stop-start #Take difference of the time
+    distance = (elapsed * 34300)/2 #Multiply with constant
 
     return distance
 
