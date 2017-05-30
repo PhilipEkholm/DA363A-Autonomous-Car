@@ -1,3 +1,5 @@
+Saved values from picamera calibration to counter the embedded lens distorsion.
+
 camera matrix:
 [[  2.00741851e+03   0.00000000e+00   1.04136197e+03]
  [  0.00000000e+00   2.39641039e+03  -2.15982360e+01]
