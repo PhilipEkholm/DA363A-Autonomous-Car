@@ -1,0 +1,1 @@
+Trained HAAR-classifiers goes here. At the moment we have stop sign, left and right working, while the traffic light is not currently working.

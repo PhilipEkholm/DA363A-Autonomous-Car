@@ -1,5 +1,4 @@
-__author__ = 'zhengwang'
-
+#Simple predicting test for showing the accuracy of the neural network
 import cv2
 import numpy as np
 import glob

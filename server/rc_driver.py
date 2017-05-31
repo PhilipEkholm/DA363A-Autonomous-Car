@@ -1,3 +1,12 @@
+"""
+Rc_driver.py
+
+The main server file for autonomous driving.
+
+Variables:
+    sensor_data: global variable that can be one way shared between threads
+""" 
+
 import threading
 import SocketServer
 import serial
@@ -11,29 +20,45 @@ sensor_data = " "
 
 
 class NeuralNetwork(object):
+    """
+    NeuralNetwork
+    
+    class for setting up neural network with OpenCV 2.
+    """
 
     def __init__(self):
+        #Load model with MLP
         self.model = cv2.ANN_MLP()
 
+
+    #Create the model and load the training file
     def create(self):
         layer_size = np.int32([38400, 32, 4])
         self.model.create(layer_size)
         self.model.load('mlp_xml/mlp.xml')
 
+    #Give a prediction of upcoming images
     def predict(self, samples):
         ret, resp = self.model.predict(samples)
         return resp.argmax(-1)
 
+"""
+RCControl
+
+This is the class responsible for sending data back to the raspberry pi about
+what to do next. It uses a socket to send data over using a TCP-stream
+"""
 
 class RCControl(object):
     def __init__(self):
-        TCP_IP = '169.254.230.248'
+        TCP_IP = '169.254.230.248' #IP-address can vary
         TCP_PORT = 8001
+        #Create a socket
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.connect((TCP_IP, TCP_PORT))
 
+    #Use the prediction from the neural net and send it over
     def steer(self, prediction):
-	
         if prediction == 2:
             self.s.send('1')
             print("Forward")
@@ -49,12 +74,22 @@ class RCControl(object):
     def stop(self):
         self.s.send('0')
 
+"""
+DistanceToCamera
 
+A helper class for determinating the distance to a detected sign
+using monocular vision. The method depends on that the camera downward 
+angle is correct. The lower the angle the more accurate the calculation
+becomes.
+
+Normal downward angle: 8 degrees (0,14 rad)
+"""
 class DistanceToCamera(object):
 
     def __init__(self):
         # camera params
         self.alpha = 8.0 * math.pi / 180
+        #Camera values from the camera calibrations
         self.v0 = 119.865631204
         self.ay = 332.262498472
 
@@ -66,7 +101,13 @@ class DistanceToCamera(object):
                 (image.shape[1] - x_shift, image.shape[0] - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
         return d
 
+"""
+ObjectDetection
 
+The object detection contains code for detecting different classifiers
+and draw identifiers on them to the camera feed. Some obselete code for
+traffic light can still be found.
+"""
 class ObjectDetection(object):
 
     def __init__(self):
@@ -111,7 +152,13 @@ class ObjectDetection(object):
             
         return v
 
+"""
+SensorDataHandler
 
+Collect data from the ultrasonic sensor found on the car and round the float
+value to one decimal, assign the global variable the value to be used from
+the other thread.
+"""
 class SensorDataHandler(SocketServer.BaseRequestHandler):
 
     data = " "
@@ -122,17 +169,24 @@ class SensorDataHandler(SocketServer.BaseRequestHandler):
             while self.data:
                 self.data = self.request.recv(1024)
                 sensor_data = round(float(self.data), 1)
+                #Debug for viewing client address
                 #print "{} sent:".format(self.client_address[0])
                 print sensor_data
         finally:
             print "Connection closed on thread 2"
 
+"""
+VideoStreamHandler
 
+Extends socketserver and is the main class in the program. 
+The stream handler will collect jpegs from the camera and use it to determine
+the next upcoming action. It will also take note of the ultrasonic sensor
+as well as eventual stop signs.
+"""
 class VideoStreamHandler(SocketServer.StreamRequestHandler):
 
     # h1: stop sign
     h1 = 15.5 - 10  # cm
-    # h2: traffic light
     h2 = 15.5 - 10
 
     # create neural network
@@ -148,6 +202,8 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
     left_cascade = cv2.CascadeClassifier('cascade_xml/lefthaar.xml')
     light_cascade = cv2.CascadeClassifier('cascade_xml/traffic_light.xml')
 
+    #Initial values to signs. Any lower value than 25 will
+    #trigger neural network.
     d_to_camera = DistanceToCamera()
     d_stop_sign = 25
     d_right_sign = 25
@@ -174,13 +230,14 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
                 stream_bytes += self.rfile.read(1024)
                 first = stream_bytes.find('\xff\xd8')
                 last = stream_bytes.find('\xff\xd9')
+                #Check if feed as been sent
                 if first != -1 and last != -1:
                     jpg = stream_bytes[first:last+2]
                     stream_bytes = stream_bytes[last+2:]
                     gray = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.CV_LOAD_IMAGE_GRAYSCALE)
                     image = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.CV_LOAD_IMAGE_UNCHANGED)
 
-                    # lower half of the image
+                    # only lower half of the image is used to determine the path for neural network.
                     half_gray = gray[120:240, :]
 
                     # object detection
@@ -206,11 +263,13 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
                     # neural network makes prediction
                     prediction = self.model.predict(image_array)
 
-                    # stop conditions
+                    # stop conditions for sensor data. The greater than 5 is to avoid
+                    #arbitrary values since the sensor data is relying on actually hitting anything
                     if sensor_data is not None and 5 < sensor_data < 30:
                         print("Stop, obstacle in front")
                         self.rc_car.stop()
                     
+                    #stop condition for the stop sign and check flag
                     elif 0 < self.d_stop_sign < 25 and stop_sign_active:
                         print("Stop sign ahead")
                         self.rc_car.stop()
@@ -230,6 +289,7 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
                             stop_flag = False
                             stop_sign_active = False
 
+                    #Turn right if the right sign is spotted
                     elif 0 < self.d_right_sign < 25:
                         print("Turn right ahead")
                         self.rc_car.steer(1)
@@ -248,6 +308,7 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
                             self.d_right_sign = 25
                             turn_right_flag = False
 
+                    #Turn left if the left sign is spotted
                     elif 0 < self.d_left_sign < 25:
                         print("Turn left ahead")
                         self.rc_car.steer(0)
@@ -266,6 +327,7 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
                             self.d_left_sign = 25
                             turn_left_flag = False
 
+                    #Obselete code for traffic light
                     elif 0 < self.d_light < 30:
                         #print("Traffic light ahead")
                         if self.obj_detection.red_light:
@@ -282,7 +344,7 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
                         self.obj_detection.red_light = False
                         self.obj_detection.green_light = False
                         self.obj_detection.yellow_light = False
-
+                    #Otherwise continue forward
                     else:
                         self.rc_car.steer(prediction)
                         self.stop_start = cv2.getTickCount()
@@ -302,7 +364,11 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
         finally:
             print "Connection closed on thread 1"
 
+"""
+ThreadServer
 
+Helper class for setting up threads with socketserver for handling requests.
+"""
 class ThreadServer(object):
 
     def server_thread(host, port):
@@ -318,6 +384,7 @@ class ThreadServer(object):
     video_thread = threading.Thread(target=server_thread('169.254.167.89', 8000))
     video_thread.start()
 
+#Override main with constructor call
 if __name__ == '__main__':
     ThreadServer()
 
