@@ -1,4 +1,5 @@
 // Declare L298N Dual H-Bridge Motor Controller directly since there is not a library to load.
+// Author Henrik Fredlund
 #include <Servo.h>
 
 Servo pointer;
@@ -23,50 +24,50 @@ void setup() {  // Setup runs once per reset
 
   //Define L298N Dual H-Bridge Motor Controller Pins
 
-  pinMode(dir1PinA,OUTPUT);
-  pinMode(dir2PinA,OUTPUT);
-  pinMode(speedPinA,OUTPUT);
+  pinMode(dir1PinA, OUTPUT);
+  pinMode(dir2PinA, OUTPUT);
+  pinMode(speedPinA, OUTPUT);
   pinMode(speedInputPin, INPUT);
   pinMode(dirInputPin, INPUT);
   pinMode(dirInputPin, INPUT);
   pointer.attach(servoPin);
-  
+
 
 }
 
 /*
-*   The golden method! Control the motor with
-*   a certain speed (0 to 100). Direction: 0 reverse, 1 forward.
+    The golden method! Control the motor with
+    a certain speed (0 to 100). Direction: 0 reverse, 1 forward.
 */
 
-void motor_run(int speed, int direction){
-    if(direction == 1){
-        analogWrite(speedPinA, speed);//Sets speed variable via PWM 
-        digitalWrite(dir1PinA, LOW);
-        digitalWrite(dir2PinA, HIGH);
-        Serial.println("Motor forward");
-        Serial.println(speed);
-    }
-    else if (direction == 0) {
-        analogWrite(speedPinA, speed);
-        digitalWrite(dir1PinA, HIGH);
-        digitalWrite(dir2PinA, LOW);
-        Serial.println("Motor Reverse");
-        
-    }
+void motor_run(int speed, int direction) {
+  if (direction == 1) {
+    analogWrite(speedPinA, speed);//Sets speed variable via PWM
+    digitalWrite(dir1PinA, LOW);
+    digitalWrite(dir2PinA, HIGH);
+    Serial.println("Motor forward");
+    Serial.println(speed);
+  }
+  else if (direction == 0) {
+    analogWrite(speedPinA, speed);
+    digitalWrite(dir1PinA, HIGH);
+    digitalWrite(dir2PinA, LOW);
+    Serial.println("Motor Reverse");
+
+  }
 }
 
-void steer(int capacity){
-    if(capacity > 85) { 
-       capacity = 85;  
-    }
-    else if (capacity < 12) {
-      capacity = 12;
-    }
-    int adjustment = 10.24 * capacity;
-    //Steering between 75 degrees and 95 degrees from car right.
-    int pos = map(adjustment, 0, 1024, 70, 90);
-    pointer.write(pos);
+void steer(int capacity) {
+  if (capacity > 85) {
+    capacity = 85;
+  }
+  else if (capacity < 12) {
+    capacity = 12;
+  }
+  int adjustment = 10.24 * capacity;
+  //Steering between 75 degrees and 95 degrees from car right.
+  int pos = map(adjustment, 0, 1024, 70, 90);
+  pointer.write(pos);
 }
 
 void loop() {
@@ -76,13 +77,13 @@ void loop() {
   inputServo = map(sensorValue1, 0, 676, 0, 100);
   //Serial.println(inputServo);
   steer(inputServo);
- // motor_run(50, digitalRead(dirInputPin));
- motor_run(inputSpeed, 1);
+  // motor_run(50, digitalRead(dirInputPin));
+  motor_run(inputSpeed, 1);
   Serial.println(inputSpeed);
-  
+
   delay(2);
-  
 
 
- 
- }
+
+
+}
