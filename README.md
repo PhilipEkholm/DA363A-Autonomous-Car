@@ -1,5 +1,5 @@
 # P1-Autonomous-Car
-Ett projekt som vi gjorde under första året på ingenjörslinjen. Ett ambitiöst försök att bygga en förarlös bil, vilket nästan gick!
+A project we did during the first year in the engineering program. An ambitious attempt to create a small autonomous vehicle - which almost worked!
 
 Interesting code:
 	- AndroidClient/
