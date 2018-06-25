@@ -1,5 +1,5 @@
-# P1-Autonomous-Car
-A project we did during the first year in the engineering program. An ambitious attempt to create a small autonomous vehicle - which almost worked!
+# DA363A-Autonomous-Car
+A project we did during the first year in the computer engineering program. An ambitious attempt to create a small autonomous vehicle - which almost worked!
 
 Interesting code:
 	- AndroidClient/
@@ -21,3 +21,12 @@ Interesting code:
 		* mlp_training.py
 		* picam_calibration.py
 		* rc_driver.py
+
+Written by:
+
+- Philip Ekholm
+- Henrik Fredlund
+- Danial Ashouri Taluki
+- Yahya "Johan" Omara
+- Taleb Hammoudé
+- Viktor Torki
